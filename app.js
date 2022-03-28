@@ -1,41 +1,57 @@
-const express = require('express')
-const { getTopics } = require('./controllers/topics')
+const express = require("express");
+const { getTopics } = require("./controllers/topics");
+const { getArticleById,patchArticleById } = require("./controllers/articles");
 
-const app = express()
-app.use(express.json())
+const app = express();
+app.use(express.json());
 
 //////////////////////////////////////////////////////////////
-// getTopics
+// GET /api/topics
 //////////////////////////////////////////////////////////////
-app.get('/api/topics', getTopics)
+app.get("/api/topics", getTopics);
+
+//////////////////////////////////////////////////////////////
+// GET /api/articles/:article_id
+//////////////////////////////////////////////////////////////
+app.get("/api/articles/:article_id", getArticleById);
+
+
+
+//////////////////////////////////////////////////////////////
+//PATCH /api/articles/:article_id
+//////////////////////////////////////////////////////////////
+app.patch('/api/articles/:article_id', patchArticleById);
+
+
 
 // NO ROUTE ERROR
-app.all('/*', (req, res) => {
-  res.status(404).send({ message: 'Route not found' })
-})
+app.all("/*", (req, res) => {
+  res.status(404).send({ message: "Route not found" });
+});
 
 // VALIDATION ERROR
 app.use((err, req, res, next) => {
   if (err.status && err.message) {
-    res.status(err.status).send({ message: err.message })
+    res.status(err.status).send({ message: err.message });
   } else {
-    next(err)
+    next(err);
   }
-})
+});
 
 // DATABASE ERROR
 app.use((err, req, res, next) => {
-  if (err.code == '22P02') {
-    res.status(400).send({ message: 'Bad Request!!' })
+  //console.log('DB ERROR:==========>',err)
+  if (err.code == "22P02") {
+    res.status(400).send({ message: "Bad Request!!" });
   } else {
-    next(err)
+    next(err);
   }
-})
+});
 
 // SERVER ERROR
 app.use((err, req, res, next) => {
-  console.log(err)
-  res.status(500).send({ message: 'Internal Server Error!' })
-})
+  //console.log(err);
+  res.status(500).send({ message: "Internal Server Error!" });
+});
 
-module.exports = app
+module.exports = app;
