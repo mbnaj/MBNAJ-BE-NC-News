@@ -1,13 +1,11 @@
-const { selectTopics} = require('../models/topics.js');
-  
-  
-  exports.getTopics = (req, res,next) => {
+const { selectTopics } = require('../models/topics.js')
 
-    return selectTopics().then((data) => {
-      res.status(200).send({topics:data});
+exports.getTopics = (req, res, next) => {
+  return selectTopics()
+    .then((data) => {
+      res.status(200).send({ topics: data })
     })
-    .catch((err)=>{
-      next(err);
-    });
-  };
-  
+    .catch((err) => {
+      next(err)
+    })
+}
