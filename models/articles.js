@@ -19,9 +19,14 @@ exports.selectArticleById = (article_id) => {
     articles.body,
     articles.topic,
     articles.created_at,
-    articles.votes,users.name as author  
+    articles.votes,
+    users.name as author,
+    count(comments.*) as comment_count 
     FROM articles 
-    INNER JOIN users ON users.username=articles.author WHERE article_id=$1
+    INNER JOIN users ON users.username=articles.author
+    INNER JOIN comments ON comments.article_id=articles.article_id 
+    WHERE articles.article_id=$1
+    GROUP BY articles.article_id,users.name
     ; `;
 
   return db.query(sql, [article_id]).then((data) => {
