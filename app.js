@@ -1,8 +1,8 @@
 const express = require("express");
-const { getTopics } = require("./controllers/topics");
-const { getArticleById,patchArticleById ,getArticles} = require("./controllers/articles");
-const { getUsers } = require("./controllers/users");
-const { getCommentsByArticleId,postCommentsByArticleId } = require("./controllers/comments");
+const { getTopics } = require("./controllers/controller.topics");
+const { getArticleById,patchArticleById ,getArticles} = require("./controllers/controller.articles");
+const { getUsers } = require("./controllers/controller.users");
+const { getCommentsByArticleId,postCommentsByArticleId } = require("./controllers/controller.comments");
 
 const app = express();
 app.use(express.json());
@@ -48,9 +48,21 @@ app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
 
 
 
+
 // NO ROUTE ERROR
 app.all("/*", (req, res) => {
   res.status(404).send({ message: "Route not found" });
+});
+
+// DATABASE ERROR
+app.use((err, req, res, next) => {
+  //console.log('DB ERROR:==========>',err)
+  let dbErrors = ['22P02','23503'];
+  if ( dbErrors.includes( err.code) ) {
+    res.status(400).send({ message: "Bad Request" });
+  } else {
+    next(err);
+  }
 });
 
 // VALIDATION ERROR
@@ -62,19 +74,11 @@ app.use((err, req, res, next) => {
   }
 });
 
-// DATABASE ERROR
-app.use((err, req, res, next) => {
-  //console.log('DB ERROR:==========>',err)
-  if (err.code == "22P02") {
-    res.status(400).send({ message: "Bad Request" });
-  } else {
-    next(err);
-  }
-});
+
 
 // SERVER ERROR
 app.use((err, req, res, next) => {
-  //console.log(err);
+  console.log(err);
   res.status(500).send({ message: "Internal Server Error!" });
 });
 

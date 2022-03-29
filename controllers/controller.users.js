@@ -1,4 +1,4 @@
-const { selectUsers } = require('../models/users.js')
+const { selectUsers } = require('../models/model.users.js')
 
 exports.getUsers = (req, res, next) => {
   return selectUsers()

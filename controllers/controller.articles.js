@@ -2,10 +2,16 @@ const {
   selectArticles,
   selectArticleById,
   updateArticleById,
-} = require("../models/articles.js");
+} = require("../models/model.articles.js");
 
 exports.getArticles = (req, res, next) => {
-  return selectArticles()
+  const { topic, sort_by, order } = req.query;
+  let keyword = {};
+  if (topic != null) {
+    keyword["topic"] = topic;
+  }
+
+  return selectArticles(keyword, sort_by, order)
     .then((data) => {
       res.status(200).send({ articles: data });
     })

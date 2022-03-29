@@ -2,7 +2,7 @@ const {
   selectComments,
   selectCommentsByArticleId,
   insertCommentsByArticleId,
-} = require("../models/comments.js");
+} = require("../models/model.comments.js");
 
 exports.getComments = (req, res, next) => {
   return selectComments()
@@ -32,7 +32,7 @@ exports.postCommentsByArticleId = (req, res, next) => {
 
   return insertCommentsByArticleId(article_id, username, body)
     .then((data) => {
-      res.status(200).send({ comment: data });
+      res.status(201).send({ comment: data });
     })
     .catch((err) => {
       next(err);
