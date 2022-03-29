@@ -1,4 +1,4 @@
-const { selectTopics } = require('../models/topics.js')
+const { selectTopics } = require('../models/model.topics.js')
 
 exports.getTopics = (req, res, next) => {
   return selectTopics()

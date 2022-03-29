@@ -171,11 +171,37 @@ describe("Testing GET api/articles", () => {
         });
       });
   });
+
+  test("2- GET /api/articles returns status:200, responds with an array of articles sorted by created_at", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(12);
+        expect(articles).toBeSorted('created_at');
+      });
+  });
+
+  test("3- GET /api/articles returns status:200, responds with an array of articles sorted by created_at and filterd by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(1);
+        expect(articles).toBeSorted('created_at');
+      });
+  });
+
+
 });
 
 
 describe("Testing ADD api/articles/:article_id/comments ", () => {
-  test("POST /api/articles/:article_id/comments returns status:204, responds with inserted comment", () => {
+  test("POST /api/articles/:article_id/comments returns status:201, responds with inserted comment", () => {
     const insertedData = {
       username: 'butter_bridge',
       body:'Good article'
@@ -184,7 +210,7 @@ describe("Testing ADD api/articles/:article_id/comments ", () => {
     return request(app)
       .post("/api/articles/3/comments")
       .send(insertedData)
-      .expect(200)
+      .expect(201)
       .then(({ body }) => {
         const { comment } = body;
         expect(comment).toBeInstanceOf(Object);
@@ -194,4 +220,21 @@ describe("Testing ADD api/articles/:article_id/comments ", () => {
         expect(comment.body).toBe('Good article');
       });
   });
+
+  test("POST /api/articles/:article_id/comments with username that not exists", () => {
+    const insertedData = {
+      username: 'not_exists',
+      body:'Good article'
+    };
+
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(insertedData)
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+
 });

@@ -1,6 +1,7 @@
 const db = require("../db/connection");
 
-exports.selectArticles = () => {
+exports.selectArticles = (keyword,sort_by='created_at',order='asc') => {
+  let filter = [];
   let sql = `SELECT 
   articles.title,
   articles.article_id,
@@ -12,10 +13,22 @@ exports.selectArticles = () => {
   count(comments.*) AS comment_count 
   FROM articles 
   LEFT JOIN users ON users.username=articles.author
-  LEFT JOIN comments ON comments.article_id=articles.article_id 
-  GROUP BY articles.article_id,users.name `;
+  LEFT JOIN comments ON comments.article_id=articles.article_id `;
 
-  return db.query(sql).then((data) => {
+  if(keyword.hasOwnProperty('topic')){
+    sql+= ` WHERE LOWER(topic) LIKE $1 `;
+    filter.push('%' + keyword['topic'].toString().toLowerCase() + '%'); 
+  }
+
+  sql+= ` GROUP BY articles.article_id,users.name `;
+
+  if(['title','article_id','created_at','votes','comment_count','author'].includes(sort_by)){
+    if(['ASC','DESC','asc','desc'].includes(order)){
+      sql+= ` ORDER BY ${sort_by} ${order}`;
+    }
+  }
+
+  return db.query(sql,filter).then((data) => {
     return data.rows;
   });
 };
