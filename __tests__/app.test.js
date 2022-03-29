@@ -64,6 +64,22 @@ describe("Testing the api/articles/:article_id ", () => {
         expect(message).toBe("Bad Request!!");
       });
   });
+
+  test.only("GET /api/articles/:article_id returns status:200, responds with an array of articles objects and comments count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toBeInstanceOf(Object);
+        expect(article.article_id).toBe(1);
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.author).toBe("jonny");
+        expect(article.comment_count).toBe("11");
+      });
+  });
+
+
 });
 describe("Testing the api/articles/:article_id ", () => {
   test("PATCH /api/articles/:article_id returns status:204, responds with updated article", () => {

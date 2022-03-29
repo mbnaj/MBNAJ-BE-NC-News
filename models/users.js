@@ -2,7 +2,7 @@ const db = require('../db/connection');
 
 exports.selectUsers = () => {
 
-    let sql = `SELECT *  FROM users ; `;
+    let sql = `SELECT * FROM users ; `;
     
     return db.query(sql)
     .then((data)=>{
