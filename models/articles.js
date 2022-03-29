@@ -1,7 +1,19 @@
 const db = require("../db/connection");
 
 exports.selectArticles = () => {
-  let sql = `SELECT *  FROM articles ; `;
+  let sql = `SELECT 
+  articles.title,
+  articles.article_id,
+  articles.body,
+  articles.topic,
+  articles.created_at,
+  articles.votes,
+  users.name AS author,
+  count(comments.*) AS comment_count 
+  FROM articles 
+  LEFT JOIN users ON users.username=articles.author
+  LEFT JOIN comments ON comments.article_id=articles.article_id 
+  GROUP BY articles.article_id,users.name `;
 
   return db.query(sql).then((data) => {
     return data.rows;
@@ -10,7 +22,7 @@ exports.selectArticles = () => {
 
 exports.selectArticleById = (article_id) => {
   if (typeof article_id !== "number" && article_id < 0) {
-    return Promise.reject({ status: 400, message: "Bad Request!!" });
+    return Promise.reject({ status: 400, message: "Bad Request" });
   }
 
   let sql = `SELECT 
@@ -20,8 +32,8 @@ exports.selectArticleById = (article_id) => {
     articles.topic,
     articles.created_at,
     articles.votes,
-    users.name as author,
-    count(comments.*) as comment_count 
+    users.name AS author,
+    count(comments.*) AS comment_count 
     FROM articles 
     INNER JOIN users ON users.username=articles.author
     INNER JOIN comments ON comments.article_id=articles.article_id 
@@ -39,7 +51,7 @@ exports.updateArticleById = (article_id, inc_votes) => {
   inc_votes = parseInt(inc_votes);
 
   if (typeof article_id !== "number" && article_id < 0) {
-    //return Promise.reject({ status: 400, message: "Bad Request!!" });
+    //return Promise.reject({ status: 400, message: "Bad Request" });
   }
 
   let sql = `UPDATE articles SET votes = votes + $1 where article_id= $2 RETURNING articles.*; `;
