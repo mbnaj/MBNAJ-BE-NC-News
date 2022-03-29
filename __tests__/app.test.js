@@ -83,3 +83,24 @@ describe("Testing the api/articles/:article_id ", () => {
       });
   });
 });
+
+
+describe("Testing the api/users", () => {
+  test("GET /api/users returns status:200, responds with an array of users objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+});
