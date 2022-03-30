@@ -4,13 +4,25 @@ const db = require("../db/connection");
 
 const app = require("../app");
 const request = require("supertest");
+const endpoints = require("../endpoints.json");
 
 afterAll(() => {
   db.end();
 });
 
 beforeEach(() => seed(testData));
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+describe("Testing the api", () => {
+  test("responds error 200 and object matches the contents of endpoints.json", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toMatchObject(endpoints);
+      });
+  });
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing the api url if valid", () => {
   test("responds error 404 and a message when requesting an invalid url", () => {
     return request(app)
@@ -22,6 +34,19 @@ describe("Testing the api url if valid", () => {
       });
   });
 });
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+test("2- GET /api/articles returns status:200, responds with an array of articles sorted by created_at", () => {
+  return request(app)
+    .get("/api/articles?sort_by=created_at&order=desc")
+    .expect(200)
+    .then(({ body }) => {
+      const { articles } = body;
+      expect(articles).toBeInstanceOf(Array);
+      expect(articles).toHaveLength(12);
+      expect(articles).toBeSorted("created_at");
+    });
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing GET api/topics", () => {
   test("1- GET /api/topics returns status:200, responds with an array of topic objects", () => {
     return request(app)
@@ -42,6 +67,7 @@ describe("Testing GET api/topics", () => {
       });
   });
 });
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing GET api/articles/:article_id with different conditions", () => {
   test("1- GET /api/articles/:article_id returns status:200, responds with an array of articles objects", () => {
     return request(app)
@@ -100,10 +126,8 @@ describe("Testing GET api/articles/:article_id with different conditions", () =>
         });
       });
   });
-
 });
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing PATCH api/articles/:article_id ", () => {
   test("PATCH /api/articles/:article_id returns status:204, responds with updated article", () => {
     const updatedData = {
@@ -122,8 +146,7 @@ describe("Testing PATCH api/articles/:article_id ", () => {
       });
   });
 });
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing GET api/users", () => {
   test("1- GET /api/users returns status:200, responds with an array of users objects", () => {
     return request(app)
@@ -143,8 +166,7 @@ describe("Testing GET api/users", () => {
       });
   });
 });
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing GET api/articles", () => {
   test("1- GET /api/articles returns status:200, responds with an array of articles objects", () => {
     return request(app)
@@ -154,7 +176,7 @@ describe("Testing GET api/articles", () => {
         const { articles } = body;
         expect(articles).toBeInstanceOf(Array);
         expect(articles).toHaveLength(12);
- 
+
         articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -180,7 +202,7 @@ describe("Testing GET api/articles", () => {
         const { articles } = body;
         expect(articles).toBeInstanceOf(Array);
         expect(articles).toHaveLength(12);
-        expect(articles).toBeSorted('created_at');
+        expect(articles).toBeSorted("created_at");
       });
   });
 
@@ -192,19 +214,51 @@ describe("Testing GET api/articles", () => {
         const { articles } = body;
         expect(articles).toBeInstanceOf(Array);
         expect(articles).toHaveLength(1);
-        expect(articles).toBeSorted('created_at');
+        expect(articles).toBeSorted("created_at");
       });
   });
 
+  test("4- GET /api/articles returns status:200, responds with an array of articles sorted by article_id ", () => {
+    return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(0);
+        expect(articles).toBeSorted("article_id");
+      });
+  });
 
+  test("5- GET /api/articles returns status:200, responds with an array of articles and filterd by non-exist topic", () => {
+    return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(0);
+      });
+  });
+
+  test("6- GET /api/articles returns status:200, responds with an array of articles sorted by invalid key", () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalid")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(12);
+        expect(articles).toBeSorted("created_at");
+      });
+  });
 });
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing ADD api/articles/:article_id/comments ", () => {
-  test("POST /api/articles/:article_id/comments returns status:201, responds with inserted comment", () => {
+  test("1- POST /api/articles/:article_id/comments returns status:201, responds with inserted comment", () => {
     const insertedData = {
-      username: 'butter_bridge',
-      body:'Good article'
+      username: "butter_bridge",
+      body: "Good article",
     };
 
     return request(app)
@@ -216,15 +270,15 @@ describe("Testing ADD api/articles/:article_id/comments ", () => {
         expect(comment).toBeInstanceOf(Object);
         expect(comment.comment_id).toBe(19);
         expect(comment.article_id).toBe(3);
-        expect(comment.author).toBe('butter_bridge');
-        expect(comment.body).toBe('Good article');
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("Good article");
       });
   });
 
-  test("POST /api/articles/:article_id/comments with username that not exists", () => {
+  test("2- POST /api/articles/:article_id/comments with username that not exists", () => {
     const insertedData = {
-      username: 'not_exists',
-      body:'Good article'
+      username: "not_exists",
+      body: "Good article",
     };
 
     return request(app)
@@ -236,5 +290,21 @@ describe("Testing ADD api/articles/:article_id/comments ", () => {
         expect(message).toBe("Not Found");
       });
   });
-
 });
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+describe("Testing DELETE /api/comments/:comment_id ", () => {
+  test("1- DELETE /api/comments/:comment_id returns status:204, ", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+
+  test("2- DELETE /api/comments/:comment_id returns status:404, when sending non-exist comment id", () => {
+    return request(app)
+      .delete("/api/comments/1000")
+      .expect(404)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Not Found");
+      });
+  });
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -2,39 +2,49 @@ const {
   selectComments,
   selectCommentsByArticleId,
   insertCommentsByArticleId,
+  removeCommentById,
 } = require("../models/model.comments.js");
 
-exports.getComments = (req, res, next) => {
-  return selectComments()
-    .then((data) => {
-      res.status(200).send({ comments: data });
-    })
-    .catch((err) => {
-      next(err);
-    });
+exports.getComments = async (req, res, next) => {
+  try {
+    const data = await selectComments();
+    res.status(200).send({ comments: data });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.getCommentsByArticleId = (req, res, next) => {
+exports.getCommentsByArticleId = async (req, res, next) => {
   const { article_id } = req.params;
 
-  return selectCommentsByArticleId(article_id)
-    .then((data) => {
-      res.status(200).send({ comments: data });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  try {
+    const data = await selectCommentsByArticleId(article_id);
+    res.status(200).send({ comments: data });
+  } catch (err) {
+    next(err);
+  }
 };
 
-exports.postCommentsByArticleId = (req, res, next) => {
+exports.postCommentsByArticleId = async (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
-  return insertCommentsByArticleId(article_id, username, body)
-    .then((data) => {
-      res.status(201).send({ comment: data });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  try {
+    const data = await insertCommentsByArticleId(article_id, username, body);
+    res.status(201).send({ comment: data });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+exports.deleteCommentById = async (req, res, next) => {
+  const { comment_id } = req.params;
+
+  try {
+    await removeCommentById(comment_id);
+    res.status(204).send('ok');
+  } catch (err) {
+    next(err);
+  }
 };

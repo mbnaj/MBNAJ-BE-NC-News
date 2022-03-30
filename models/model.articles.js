@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (keyword,sort_by='created_at',order='asc') => {
+exports.selectArticles = (keyword,sort_by='created_at',order='desc') => {
   let filter = [];
   let sql = `SELECT 
   articles.title,
