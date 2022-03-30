@@ -1,4 +1,3 @@
-const { readFile } = require('fs');
 const fs = require('fs/promises');
 
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {

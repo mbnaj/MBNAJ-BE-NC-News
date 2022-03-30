@@ -42,7 +42,7 @@ test("2- GET /api/articles returns status:200, responds with an array of article
     .then(({ body }) => {
       const { articles } = body;
       expect(articles).toBeInstanceOf(Array);
-      expect(articles).toHaveLength(12);
+      expect(articles).toHaveLength(10);//default limit is 10
       expect(articles).toBeSorted("created_at");
     });
 });
@@ -112,7 +112,7 @@ describe("Testing GET api/articles/:article_id with different conditions", () =>
       .then(({ body }) => {
         const { comments } = body;
         expect(comments).toBeInstanceOf(Object);
-        expect(comments).toHaveLength(11);
+        expect(comments).toHaveLength(10);//default limit is 10
         comments.forEach((comment) => {
           expect(comment).toEqual(
             expect.objectContaining({
@@ -167,6 +167,23 @@ describe("Testing GET api/users", () => {
   });
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+describe("Testing GET api/users/:username", () => {
+  test("1- GET /api/user returns status:200, responds with user object", () => {
+    return request(app)
+      .get("/api/users/lurker")
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(user).toBeInstanceOf(Object);
+        expect(user.username).toBe("lurker");
+        expect(user.name).toBe("do_nothing");
+      });
+  });
+});
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing GET api/articles", () => {
   test("1- GET /api/articles returns status:200, responds with an array of articles objects", () => {
     return request(app)
@@ -175,7 +192,7 @@ describe("Testing GET api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeInstanceOf(Array);
-        expect(articles).toHaveLength(12);
+        expect(articles).toHaveLength(10);//default limit is 10
 
         articles.forEach((article) => {
           expect(article).toEqual(
@@ -201,7 +218,7 @@ describe("Testing GET api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeInstanceOf(Array);
-        expect(articles).toHaveLength(12);
+        expect(articles).toHaveLength(10);//default limit is 10
         expect(articles).toBeSorted("created_at");
       });
   });
@@ -248,10 +265,21 @@ describe("Testing GET api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         expect(articles).toBeInstanceOf(Array);
-        expect(articles).toHaveLength(12);
+        expect(articles).toHaveLength(10);//default limit is 10
         expect(articles).toBeSorted("created_at");
       });
   });
+  test("7- GET /api/articles returns status:200, responds with an array of articles that contains two articles", () => {
+    return request(app)
+      .get("/api/articles?limit=2")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(2);
+      });
+  });
+
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing ADD api/articles/:article_id/comments ", () => {
@@ -304,6 +332,66 @@ describe("Testing DELETE /api/comments/:comment_id ", () => {
       .then(({ body }) => {
         const { message } = body;
         expect(message).toBe("Not Found");
+      });
+  });
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+describe("Testing ADD api/articles ", () => {
+  test.only("1- POST /api/articles returns status:201, responds with inserted article", () => {
+    const insertedData = {
+      author: "butter_bridge",
+      body: "Good new article",
+      topic:'cats',
+      title:"new title"
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(insertedData)
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        //expect(article).toBeInstanceOf(Object);
+        expect(article.author).toBe("butter_bridge");
+        expect(article.body).toBe("Good article");
+      });
+  });
+});
+*/
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+describe("Testing DELETE /api/articles/:article_id ", () => {
+  test("1- DELETE /api/articles/:article_id returns status:204, ", () => {
+    return request(app).delete("/api/articles/1").expect(204);
+  });
+
+  test("2- DELETE /api/articles/:article_id returns status:404, when sending non-exist article id", () => {
+    return request(app)
+      .delete("/api/articles/invalidId")
+      .expect(400)
+      .then(({ body }) => {
+        const { message } = body;
+        expect(message).toBe("Bad Request");
+      });
+  });
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+describe("Testing POST /api/topics ", () => {
+  test("1- POST /api/topics returns status:201, responds with inserted topic", () => {
+    const insertedData = {
+      "slug": "topic name here",
+      "description": "description here"
+    };
+
+    return request(app)
+      .post("/api/topics")
+      .send(insertedData)
+      .expect(201)
+      .then(({ body }) => {
+        const { topic } = body;
+        expect(topic).toBeInstanceOf(Object);
+        expect(topic.slug).toBe("topic name here");
+        expect(topic.description).toBe("description here");
       });
   });
 });

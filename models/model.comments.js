@@ -7,11 +7,13 @@ exports.selectComments = () => {
     return data.rows;
   });
 };
-
-exports.selectCommentsByArticleId = (article_id) => {
+////////////////////////////////////////////////////////////////////////////////////
+exports.selectCommentsByArticleId = (article_id,limit=10,offset=0) => {
   article_id = parseInt(article_id);
+  limit = parseInt(limit);
+  offset = parseInt(offset);
 
-  if (typeof article_id !== "number" && article_id < 0) {
+  if (Number.isInteger(article_id) === false || article_id < 0) {
     return Promise.reject({ status: 400, message: "Bad Request" });
   }
 
@@ -19,7 +21,15 @@ exports.selectCommentsByArticleId = (article_id) => {
     .query(`SELECT * FROM articles WHERE article_id = $1; `, [article_id])
     .then((data) => {
       if (data.rows.length > 0) {
-        let sql = `SELECT comments.*,users.name AS author FROM comments LEFT JOIN users ON users.username=comments.author WHERE article_id = $1; `;
+        let sql = `SELECT comments.*,users.name AS author FROM comments LEFT JOIN users ON users.username=comments.author WHERE article_id = $1 `;
+
+        if (Number.isInteger(limit) && limit > 0) {
+          sql += ` LIMIT  ${limit} `;
+        }
+      
+        if (Number.isInteger(offset) && offset > 0) {
+          sql += ` OFFSET  ${offset} `;
+        }
 
         return db.query(sql, [article_id]).then((commentsData) => {
           return commentsData.rows;
@@ -29,12 +39,12 @@ exports.selectCommentsByArticleId = (article_id) => {
       }
     });
 };
-
+////////////////////////////////////////////////////////////////////////////////////
 exports.insertCommentsByArticleId = (article_id, author, body) => {
   let promises = [];
   article_id = parseInt(article_id);
 
-  if (typeof article_id !== "number" && article_id < 0) {
+  if (Number.isInteger(article_id) === false || article_id < 0) {
     return Promise.reject({ status: 400, message: "Bad Request" });
   }
 
@@ -63,11 +73,11 @@ exports.insertCommentsByArticleId = (article_id, author, body) => {
     });
   });
 };
-
+////////////////////////////////////////////////////////////////////////////////////
 exports.removeCommentById = (comment_id) => {
   comment_id = parseInt(comment_id);
 
-  if (typeof comment_id !== "number" && comment_id < 0) {
+  if (Number.isInteger(comment_id) === false || comment_id < 0) {
     return Promise.reject({ status: 400, message: "Bad Request" });
   }
 

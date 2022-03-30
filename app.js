@@ -1,8 +1,8 @@
 const express = require("express");
 const { getAPI } = require("./db/helpers/utils");
-const { getTopics } = require("./controllers/controller.topics");
-const { getArticleById,patchArticleById ,getArticles} = require("./controllers/controller.articles");
-const { getUsers } = require("./controllers/controller.users");
+const { getTopics ,postTopic} = require("./controllers/controller.topics");
+const { getArticleById,patchArticleById ,getArticles,postArticle,deleteArticleById} = require("./controllers/controller.articles");
+const { getUsers,getUser } = require("./controllers/controller.users");
 const { getCommentsByArticleId,postCommentsByArticleId ,deleteCommentById} = require("./controllers/controller.comments");
 
 const app = express();
@@ -60,7 +60,31 @@ app.delete("/api/comments/:comment_id", deleteCommentById);
 app.get("/api", getAPI);
 
 
+//////////////////////////////////////////////////////////////
+// GET /api/users/:username
+//////////////////////////////////////////////////////////////
+app.get("/api/users/:username", getUser);
 
+
+
+//////////////////////////////////////////////////////////////
+// POST /api/articles
+//////////////////////////////////////////////////////////////
+app.post("/api/articles", postArticle);
+
+
+
+//////////////////////////////////////////////////////////////
+// DELETE /api/articles/:article_id
+//////////////////////////////////////////////////////////////
+app.delete("/api/articles/:article_id", deleteArticleById);
+
+
+
+//////////////////////////////////////////////////////////////
+// POST /api/articles
+//////////////////////////////////////////////////////////////
+app.post("/api/topics", postTopic);
 
 
 
