@@ -1,8 +1,9 @@
 const express = require("express");
+const { getAPI } = require("./db/helpers/utils");
 const { getTopics } = require("./controllers/controller.topics");
 const { getArticleById,patchArticleById ,getArticles} = require("./controllers/controller.articles");
 const { getUsers } = require("./controllers/controller.users");
-const { getCommentsByArticleId,postCommentsByArticleId } = require("./controllers/controller.comments");
+const { getCommentsByArticleId,postCommentsByArticleId ,deleteCommentById} = require("./controllers/controller.comments");
 
 const app = express();
 app.use(express.json());
@@ -36,15 +37,29 @@ app.get("/api/articles", getArticles);
 
 
 //////////////////////////////////////////////////////////////
-// GET .api/articles/:article_id/comments
+// GET /api/articles/:article_id/comments
 //////////////////////////////////////////////////////////////
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 
 //////////////////////////////////////////////////////////////
-// POST .api/articles/:article_id/comments
+// POST /api/articles/:article_id/comments
 //////////////////////////////////////////////////////////////
 app.post("/api/articles/:article_id/comments", postCommentsByArticleId);
+
+//////////////////////////////////////////////////////////////
+// DELETE /api/comments/:comment_id
+//////////////////////////////////////////////////////////////
+app.delete("/api/comments/:comment_id", deleteCommentById);
+
+
+
+//////////////////////////////////////////////////////////////
+// GET /api
+//////////////////////////////////////////////////////////////
+app.get("/api", getAPI);
+
+
 
 
 

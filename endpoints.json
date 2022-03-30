@@ -23,5 +23,133 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+        "article": {
+          "title": "Running a Node App",
+          "article_id": 1,
+          "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+          "topic": "coding",
+          "created_at": "2020-11-07T06:03:00.000Z",
+          "votes": 0,
+          "author": "Jess Jelly",
+          "comment_count": "8"
+        }
+      
+    }
+  },  
+  "PATCH /api/articles/:article_id": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      
+        "article": {
+          "article_id": 1,
+          "title": "Running a Node App",
+          "topic": "coding",
+          "author": "jessjelly",
+          "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+          "created_at": "2020-11-07T06:03:00.000Z",
+          "votes": 2
+        }
+      
+    }
+  },
+
+  "GET /api/users": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      
+	"users": [
+		{
+			"username": "tickle122",
+			"name": "Tom Tickle",
+			"avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+		},
+		{
+			"username": "grumpy19",
+			"name": "Paul Grump",
+			"avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/78/Mr-Grumpy-3A.PNG/revision/latest?cb=20170707233013"
+		}
+    ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 86,
+          "body": "Et explicabo dignissimos officia dolore rerum aliquam corrupti. Culpa corporis earum et earum officia a est atque at. Quidem quo recusandae delectus autem possimus blanditiis optio. Sed culpa culpa. Exercitationem nemo aspernatur alias ut qui.",
+          "article_id": 1,
+          "author": "Tom Tickle",
+          "votes": 14,
+          "created_at": "2020-10-04T01:03:00.000Z"
+        },
+        {
+          "comment_id": 44,
+          "body": "Error est qui id corrupti et quod enim accusantium minus. Deleniti quae ea magni officiis et qui suscipit non.",
+          "article_id": 1,
+          "author": "Paul Grump",
+          "votes": 4,
+          "created_at": "2020-06-15T15:13:00.000Z"
+        }]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an object of user ",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },  
+  "POST /api/articles": {
+    "description": "serves an object of user ",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },
+  "POST /api/topics": {
+    "description": "serves an object of user ",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
+  },
+
+  "DELETE /api/articles/:article_id": {
+    "description": "serves an object of user ",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    }
   }
+
 }
