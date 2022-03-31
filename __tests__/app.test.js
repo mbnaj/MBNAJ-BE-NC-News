@@ -336,7 +336,7 @@ describe("Testing DELETE /api/comments/:comment_id ", () => {
   });
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
+/**/
 describe("Testing ADD api/articles ", () => {
   test.only("1- POST /api/articles returns status:201, responds with inserted article", () => {
     const insertedData = {
@@ -352,13 +352,13 @@ describe("Testing ADD api/articles ", () => {
       .expect(201)
       .then(({ body }) => {
         const { article } = body;
-        //expect(article).toBeInstanceOf(Object);
+        expect(article).toBeInstanceOf(Object);
         expect(article.author).toBe("butter_bridge");
-        expect(article.body).toBe("Good article");
+        expect(article.body).toBe("Good new article");
       });
   });
 });
-*/
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 describe("Testing DELETE /api/articles/:article_id ", () => {
   test("1- DELETE /api/articles/:article_id returns status:204, ", () => {

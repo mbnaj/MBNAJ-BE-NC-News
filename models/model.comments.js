@@ -8,7 +8,7 @@ exports.selectComments = () => {
   });
 };
 ////////////////////////////////////////////////////////////////////////////////////
-exports.selectCommentsByArticleId = (article_id,limit=10,offset=0) => {
+exports.selectCommentsByArticleId = (article_id, limit = 10, offset = 0) => {
   article_id = parseInt(article_id);
   limit = parseInt(limit);
   offset = parseInt(offset);
@@ -23,14 +23,14 @@ exports.selectCommentsByArticleId = (article_id,limit=10,offset=0) => {
       if (data.rows.length > 0) {
         let sql = `SELECT comments.*,users.name AS author FROM comments LEFT JOIN users ON users.username=comments.author WHERE article_id = $1 `;
 
-        if (Number.isInteger(limit) && limit > 0) {
-          sql += ` LIMIT  ${limit} `;
+        if (Number.isInteger(limit) == false || limit < 0) {
+          limit = 10;
         }
-      
-        if (Number.isInteger(offset) && offset > 0) {
-          sql += ` OFFSET  ${offset} `;
+        sql += ` LIMIT  ${limit} `;
+        if (Number.isInteger(offset) == false || offset < 0) {
+          offset = 0;
         }
-
+        sql += ` OFFSET  ${offset} `;
         return db.query(sql, [article_id]).then((commentsData) => {
           return commentsData.rows;
         });
@@ -87,9 +87,10 @@ exports.removeCommentById = (comment_id) => {
       if (data.rowCount === 0) {
         return Promise.reject({ status: 404, message: "Not Found" });
       }
-      return db.query(`DELETE FROM comments WHERE comment_id =$1`,[comment_id])
-      .then(()=>{
+      return db
+        .query(`DELETE FROM comments WHERE comment_id =$1`, [comment_id])
+        .then(() => {
           return true;
-      });
+        });
     });
 };
