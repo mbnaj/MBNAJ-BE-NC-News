@@ -8,7 +8,8 @@ exports.selectComments = () => {
   });
 };
 ////////////////////////////////////////////////////////////////////////////////////
-exports.selectCommentsByArticleId = (article_id, limit = 10, offset = 0) => {
+exports.selectCommentsByArticleId = (article_id, limit = 10, p = 0) => {
+  let offset = 0;
   article_id = parseInt(article_id);
   limit = parseInt(limit);
   offset = parseInt(offset);
@@ -27,8 +28,8 @@ exports.selectCommentsByArticleId = (article_id, limit = 10, offset = 0) => {
           limit = 10;
         }
         sql += ` LIMIT  ${limit} `;
-        if (Number.isInteger(offset) == false || offset < 0) {
-          offset = 0;
+        if (Number.isInteger(p) !== false && p > 0) {
+          offset = p * limit;
         }
         sql += ` OFFSET  ${offset} `;
         return db.query(sql, [article_id]).then((commentsData) => {

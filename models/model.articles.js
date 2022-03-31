@@ -5,9 +5,10 @@ exports.selectArticles = (
   sort_by = "created_at",
   order = "desc",
   limit = 10,
-  offset = 0
+  p = 0
 ) => {
   let filter = [];
+  let offset = 0;
   let sortbyColumns = [
     "title",
     "article_id",
@@ -17,7 +18,7 @@ exports.selectArticles = (
     "author",
   ];
   limit = parseInt(limit);
-  offset = parseInt(offset);
+  p = parseInt(p);
 
   let sql = `SELECT 
   articles.title,
@@ -51,8 +52,8 @@ exports.selectArticles = (
     limit = 10;
   }
   sql += ` LIMIT  ${limit} `;
-  if (Number.isInteger(offset) == false || offset < 0) {
-    offset = 0;
+  if (Number.isInteger(p) !== false && p > 0) {
+    offset = p * limit;
   }
   sql += ` OFFSET  ${offset} `;
 

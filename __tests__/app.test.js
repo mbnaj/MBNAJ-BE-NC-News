@@ -338,7 +338,7 @@ describe("Testing DELETE /api/comments/:comment_id ", () => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**/
 describe("Testing ADD api/articles ", () => {
-  test.only("1- POST /api/articles returns status:201, responds with inserted article", () => {
+  test("1- POST /api/articles returns status:201, responds with inserted article", () => {
     const insertedData = {
       author: "butter_bridge",
       body: "Good new article",
