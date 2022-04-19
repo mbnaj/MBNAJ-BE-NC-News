@@ -19,6 +19,7 @@ exports.selectArticles = (
   ];
   limit = parseInt(limit);
   p = parseInt(p);
+  let total_count=0;
 
   let sql = `SELECT 
   articles.title,
@@ -48,6 +49,11 @@ exports.selectArticles = (
   }
   sql += ` ORDER BY ${sort_by} ${order}`;
 
+
+  db.query(sql, filter).then((data) => {
+    total_count =  data.rows?.length;
+  });
+
   if (Number.isInteger(limit) == false || limit < 0) {
     limit = 10;
   }
@@ -58,6 +64,7 @@ exports.selectArticles = (
   sql += ` OFFSET  ${offset} `;
 
   return db.query(sql, filter).then((data) => {
+	data.total_count = total_count;
     return data.rows;
   });
 };
