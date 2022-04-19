@@ -15,7 +15,7 @@ exports.getArticles = (req, res, next) => {
 
   return selectArticles(keyword, sort_by, order,limit,p)
     .then((data) => {
-      res.status(200).send({ articles: data });
+      res.status(200).send(data );
     })
     .catch((err) => {
       next(err);

@@ -9,6 +9,7 @@ exports.selectArticles = (
 ) => {
   let filter = [];
   let offset = 0;
+  let promises = [];
   let sortbyColumns = [
     "title",
     "article_id",
@@ -50,8 +51,8 @@ exports.selectArticles = (
   sql += ` ORDER BY ${sort_by} ${order}`;
 
 
-  db.query(sql, filter).then((data) => {
-    total_count =  data.rows?.length;
+  promises[0]=db.query(sql, filter).then((data) => {
+    return  data.rowCount
   });
 
   if (Number.isInteger(limit) == false || limit < 0) {
@@ -63,10 +64,15 @@ exports.selectArticles = (
   }
   sql += ` OFFSET  ${offset} `;
 
-  return db.query(sql, filter).then((data) => {
-	data.total_count = total_count;
+  promises[1]=db.query(sql, filter).then((data) => {
     return data.rows;
   });
+
+  return Promise.all(promises).then(([total_count, articles]) => {
+    let result = {total_count:total_count,articles:articles};
+    return result;
+  });
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
