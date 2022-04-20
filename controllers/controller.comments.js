@@ -3,6 +3,7 @@ const {
   selectCommentsByArticleId,
   insertCommentsByArticleId,
   removeCommentById,
+  updateCommentById,
 } = require("../models/model.comments.js");
 
 exports.getComments = async (req, res, next) => {
@@ -38,12 +39,25 @@ exports.postCommentsByArticleId = async (req, res, next) => {
 };
 
 
+
 exports.deleteCommentById = async (req, res, next) => {
   const { comment_id } = req.params;
 
   try {
     await removeCommentById(comment_id);
     res.status(204).send('ok');
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchCommentsById = async (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+
+  try {
+    const data = await updateCommentById(article_id, inc_votes);
+    res.status(201).send({ comment: data });
   } catch (err) {
     next(err);
   }

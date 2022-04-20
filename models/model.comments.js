@@ -95,3 +95,19 @@ exports.removeCommentById = (comment_id) => {
         });
     });
 };
+////////////////////////////////////////////////////////////////////////////////////
+exports.updateCommentById = (comment_id,inc_votes) => {
+  comment_id = parseInt(comment_id);
+  inc_votes = parseInt(inc_votes);
+
+  if (Number.isInteger(comment_id) === false || comment_id < 0) {
+    return Promise.reject({ status: 400, message: "Bad Request" });
+  }
+
+  let sql = `UPDATE comments SET votes = votes + $1 where comment_id= $2 RETURNING comments.*; `;
+
+  return db.query(sql, [inc_votes, comments_id]).then((data) => {
+    return data.rows[0];
+  });
+
+};
