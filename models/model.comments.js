@@ -106,7 +106,7 @@ exports.updateCommentById = (comment_id,inc_votes) => {
 
   let sql = `UPDATE comments SET votes = votes + $1 where comment_id= $2 RETURNING comments.*; `;
 
-  return db.query(sql, [inc_votes, comments_id]).then((data) => {
+  return db.query(sql, [inc_votes, comment_id]).then((data) => {
     return data.rows[0];
   });
 
