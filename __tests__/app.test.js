@@ -336,6 +336,26 @@ describe("Testing DELETE /api/comments/:comment_id ", () => {
   });
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+describe("Testing PATCH api/comments/:comment_id ", () => {
+  test("PATCH /api/comments/:comment_id returns status:204, responds with updated comment", () => {
+    const updatedData = {
+      inc_votes: 2,
+    };
+
+    return request(app)
+      .patch("/api/comments/3")
+      .send(updatedData)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toBeInstanceOf(Object);
+        expect(comment.comment_id).toBe(3);
+        expect(comment.votes).toBe(102);
+      });
+  });
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**/
 describe("Testing ADD api/articles ", () => {
   test("1- POST /api/articles returns status:201, responds with inserted article", () => {

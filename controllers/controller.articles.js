@@ -7,13 +7,9 @@ const {
 } = require("../models/model.articles.js");
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order,limit,p } = req.query;
-  let keyword = {};
-  if (topic != null) {
-    keyword["topic"] = topic;
-  }
+  const { topic, sort_by, order,limit,p,q } = req.query;
 
-  return selectArticles(keyword, sort_by, order,limit,p)
+  return selectArticles(topic, sort_by, order,limit,p,q)
     .then((data) => {
       res.status(200).send(data );
     })

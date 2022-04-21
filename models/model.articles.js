@@ -1,11 +1,12 @@
 const db = require("../db/connection");
 
 exports.selectArticles = (
-  keyword,
+  topic,
   sort_by = "created_at",
   order = "desc",
   limit = 10,
-  p = 0
+  p = 0,
+  keyword
 ) => {
   let filter = [];
   let offset = 0;
@@ -20,7 +21,6 @@ exports.selectArticles = (
   ];
   limit = parseInt(limit);
   p = parseInt(p);
-  let total_count=0;
 
   let sql = `SELECT 
   articles.title,
@@ -35,9 +35,18 @@ exports.selectArticles = (
   LEFT JOIN users ON users.username=articles.author
   LEFT JOIN comments ON comments.article_id=articles.article_id `;
 
-  if (keyword.hasOwnProperty("topic")) {
+  if (typeof(topic)!=='undefined') {
     sql += ` WHERE LOWER(topic) LIKE $1 `;
-    filter.push("%" + keyword["topic"].toString().toLowerCase() + "%");
+    filter.push("%" + topic.toString().toLowerCase() + "%");
+  }
+
+  if (typeof(keyword)!=='undefined') {
+    if (typeof(topic)!=='undefined') {
+      sql += ` AND LOWER(title) LIKE $2 `;
+    } else {
+      sql += ` WHERE LOWER(title) LIKE $1 `;
+    }
+    filter.push("%" + keyword.toString().toLowerCase() + "%");
   }
 
   sql += ` GROUP BY articles.article_id,users.name `;
@@ -50,9 +59,8 @@ exports.selectArticles = (
   }
   sql += ` ORDER BY ${sort_by} ${order}`;
 
-
-  promises[0]=db.query(sql, filter).then((data) => {
-    return  data.rowCount
+  promises[0] = db.query(sql, filter).then((data) => {
+    return data.rowCount;
   });
 
   if (Number.isInteger(limit) == false || limit < 0) {
@@ -64,15 +72,14 @@ exports.selectArticles = (
   }
   sql += ` OFFSET  ${offset} `;
 
-  promises[1]=db.query(sql, filter).then((data) => {
+  promises[1] = db.query(sql, filter).then((data) => {
     return data.rows;
   });
 
   return Promise.all(promises).then(([total_count, articles]) => {
-    let result = {total_count:total_count,articles:articles};
+    let result = { total_count: total_count, articles: articles };
     return result;
   });
-
 };
 
 ////////////////////////////////////////////////////////////////////////////////////
